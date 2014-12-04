@@ -66,6 +66,7 @@ app.controller('MentorCtrl', function ($scope, $http) {
   };
 
   $scope.mentors = mentors;
+  
   $scope.showAllMentors();
 
 
