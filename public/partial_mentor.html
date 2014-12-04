@@ -1,6 +1,22 @@
 <div class="container" ng-controller="MentorCtrl">
 
 <h3>Please enter mentor's github username to start.</h3>
+<h4>List of current mentors</h4>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Name of mentor</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="mentor in mentors track by $index">
+      <td>{{mentor}}</td>
+      </tr>
+    </tbody>
+  </table>
+
+
 <form role="form">
     <div class="col-md-6">
       <div class="input-group input-group-lg">

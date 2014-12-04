@@ -51,24 +51,24 @@ app.controller('GitHubCtrl', function ($scope, $http) {
   };
 });
 
-//dummy data for now. To be exctracted from db later
-  var student1 = {
-    name: "Essam",
-    subject: "Angular"
-  };
-  var student2 = {
-    name: "Victor",
-    subject: "D3"
-  };
-  var student3 = {
-    name: "Mike",
-    subject: "Backbone"
-  };
-
-  var students = [student1, student2, student3];
-
 
 app.controller('MentorCtrl', function ($scope, $http) {
+
+  var mentors =[];
+  $scope.showAllMentors = function() {
+      $http.get('/mentor')
+        .success(function(data){
+          for (var i = 0; i < data.length; i++) {
+          mentors.push((data[i].name));
+        }
+        
+      });
+  };
+
+  $scope.mentors = mentors;
+  $scope.showAllMentors();
+
+
   $scope.getGitInfo = function () {
     createMentor = function(data) {
       console.log('createMentor', data);
