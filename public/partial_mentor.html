@@ -51,21 +51,17 @@
       <thead>
         <tr>
           <th>Name of Student</th>
-          <th>Subject</th>
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat="student in students">
+        <tr ng-repeat="mentor in mentors track by $index">
           <td>
-            {{student.name}}
-          </td>
-          <td>
-            {{student.subject}}
+            {{mentor}}
           </td>
         </tr>
       </tbody>
       </table>
-     <!--  <button class="btn btn-primary" id="showStudents">Show Students</button> -->
+      <button class="btn btn-primary" ng-click="showMentors()">Show Mentors</button>
     </div>
     </table>
     <div id="totalReputation" style="display: none">

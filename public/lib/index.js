@@ -1,5 +1,5 @@
 var app = angular.module('App', ['ui.router']);
-//Hendrixer
+
 app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise('/');
   $stateProvider
@@ -42,9 +42,10 @@ app.controller('GitHubCtrl', function ($scope, $http) {
      .error(function () {
         $scope.userNotFound = true;
      });
-    $http.get("https://api.github.com/users/" + $scope.username + "/repos").success(function (data) {
-      $scope.repos = data;
-      $scope.reposFound = data.length > 0;
+    $http.get("https://api.github.com/users/" + $scope.username + "/repos")
+      .success(function (data) {
+        $scope.repos = data;
+        $scope.reposFound = data.length > 0;
     });
     $scope.username = '';
   };
@@ -69,7 +70,26 @@ app.controller('GitHubCtrl', function ($scope, $http) {
 
 app.controller('MentorCtrl', function ($scope, $http) {
   $scope.getGitInfo = function () {
-    $scope.students = students;  //dummy data was added <<<<<<
+    createMentor = function(data) {
+      console.log('createMentor', data);
+      $http.post('/mentor', data)
+        .success(function(res){
+          console.log('res after posting into db', JSON.stringify(res) );
+        });
+    };
+    var mentors = [];
+    $scope.showMentors = function() {
+      $http.get('/mentor')
+        .success(function(data){
+          for (var i = 0; i < data.length; i++) {
+          mentors.push((data[i].name));
+          console.log(mentors);
+        }
+      });
+    };
+
+    $scope.mentors = mentors;
+    console.log(mentors);
     $scope.userNotFound = false;
     $scope.loaded = false;
     $http.get("https://api.github.com/users/" + $scope.username)
@@ -77,6 +97,7 @@ app.controller('MentorCtrl', function ($scope, $http) {
         if ($scope.username !== undefined) {
           $('#studentsTable').show();
           $('#totalReputation').show();
+          createMentor(data);
         }
         
         if (data.name === "") data.name = data.login;

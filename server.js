@@ -1,6 +1,9 @@
 var path = require('path');
 var express = require('express');
 var bodyParser = require('body-parser');
+var jsonParser = bodyParser.json()
+var mongojs = require('mongojs');
+var db = mongojs('hack_project', ["mentors"]);
 var app = express();
 
 
@@ -22,9 +25,23 @@ app.set('views', __dirname + 'public');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
-// app.get('/', function(req, res, next){
-//     res.render('./mentor.html');
-// });
+
+app.post('/mentor', jsonParser, function(req, res){
+    console.log('called from server.js');
+    console.log('res', JSON.stringify(req.body.name));
+    db.mentors.insert(req.body, function(err, doc){
+      console.log(doc)
+      res.send(doc);
+    });
+
+});
+
+app.get('/mentor', function(req, res){
+    db.mentors.find(function(err, docs){
+      console.log('docs from get', docs )
+      res.send(docs);
+    })
+});
 
 
 app.listen(3000);
