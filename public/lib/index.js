@@ -147,7 +147,7 @@ app.controller('MentorCtrl',['$scope', '$http', 'students', function ($scope, $h
   $scope.mentors = students.mentors;
 
   $scope.requestMentorship = function () {
-    $scope.studentOnWaitingList = students.students
+    $scope.studentOnWaitingList = "Essam Al Joubori"
   };
 
 
@@ -243,7 +243,7 @@ app.controller('MentorCtrl',['$scope', '$http', 'students', function ($scope, $h
     $scope.down = function() {
       if (counter >= 1) {
         counter--;
-        $('#reputation').html(counter);
+        $scope.counter = counter;
       }
     };
   };
