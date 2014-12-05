@@ -31,7 +31,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
 app.factory('students', [
 function(){
   var all = {
-    students: []
+    students: [],
+    mentors: []
   };
   return all;
 }]);
@@ -84,29 +85,31 @@ app.controller('GitHubCtrl', ['$scope', '$http', 'students', function ($scope, $
   var students = [student1, student2, student3];
 
 
-app.controller('MentorCtrl', function ($scope, $http) {
+app.controller('MentorCtrl',['$scope', '$http', 'students', function ($scope, $http, students) {
 
-  var mentor1 = {
-    name: "Scott Moss",
-    reputation: 10
-  };
-  var mentor2 ={
-    name: "Mike",
-    reputation: 5
-  };
-  var mentor3 ={
-    name: "Dave",
-    reputation: 8
-  };
-  
+  $scope.mentors = students.mentors;
+
+  // var mentor1 = {
+  //   name: "Scott Moss",
+  //   reputation: 10
+  // };
+  // var mentor2 ={
+  //   name: "Mike",
+  //   reputation: 5
+  // };
+  // var mentor3 ={
+  //   name: "Dave",
+  //   reputation: 8
+  // };
+
   //$scope.mentors = [mentor1, mentor2, mentor3];
 
   $scope.createNewMentor = function(){
    console.log("saved!");
    $scope.mentors.push({name: $scope.user.name, reputation: $scope.counter});
    console.log($scope.mentors);
-  }
-  console.log($scope.mentors, mentor1, mentor2, mentor3);
+  };
+  // console.log($scope.mentors, mentor1, mentor2, mentor3);
 
   // $scope.showAllMentors = function() {
   //     $http.get('/mentor')
@@ -114,7 +117,7 @@ app.controller('MentorCtrl', function ($scope, $http) {
   //         for (var i = 0; i < data.length; i++) {
   //         mentors.push((data[i].name));
   //       }
-        
+
   //     });
   // };
 
@@ -145,7 +148,7 @@ app.controller('MentorCtrl', function ($scope, $http) {
     };
 
     $scope.mentors = mentors;
-   
+
     $scope.userNotFound = false;
     $scope.loaded = false;
     $http.get("https://api.github.com/users/" + $scope.username)
@@ -180,8 +183,8 @@ app.controller('MentorCtrl', function ($scope, $http) {
         counter--;
         $('#reputation').html(counter);
       }
-    }
+    };
   };
 
-});
+}]);
 
