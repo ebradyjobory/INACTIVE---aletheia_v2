@@ -1,7 +1,7 @@
 {
   "name": "hackathon_projectv2",
   "version": "1.0.0",
-  "description": "Linkedin for Mentor",
+  "description": "Hacker Guild",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

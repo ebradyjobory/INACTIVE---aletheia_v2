@@ -32,7 +32,7 @@ app.factory('students', [
 function(){
   var all = {
     students: [],
-    mentors: []
+    mentors: [{name:'Dougs', reputation: 5}, {name:'Marcus', reputation: 1000}, {name:'Shawn', reputation: -10}]
   };
   return all;
 }]);
@@ -76,9 +76,6 @@ app.controller('GitHubCtrl', ['$scope', '$http', 'students', function ($scope, $
     $scope.getGitInfo();
 
     $scope.username = 'drabinowitz';
-    $scope.getGitInfo();
-
-    $scope.username ='essamjoubori';
     $scope.getGitInfo();
 
     $scope.username = 'Cheerazar' ;
@@ -144,7 +141,8 @@ app.controller('MentorCtrl',['$scope', '$http', 'students', function ($scope, $h
   $scope.mentors = students.mentors;
 
   $scope.requestMentorship = function () {
-    $scope.studentOnWaitingList = "Essam Al Joubori"
+    // $scope.studentOnWaitingList = "Essam Al Joubori";
+    $scope.studentOnWaitingList = "Victor Leung";
   };
 
 
