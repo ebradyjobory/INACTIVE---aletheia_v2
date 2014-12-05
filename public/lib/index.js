@@ -1,7 +1,7 @@
 var app = angular.module('App', ['ui.router']);
 
 app.config(function($stateProvider, $urlRouterProvider) {
-  $urlRouterProvider.otherwise('/');
+
   $stateProvider
     .state('home', {
       url: '/',
@@ -23,11 +23,26 @@ app.config(function($stateProvider, $urlRouterProvider) {
       url: '/signup',
       templateUrl: 'partial-signup.html'
     });
+
+    $urlRouterProvider.otherwise('/');
 });
 
-app.controller('GitHubCtrl', function ($scope, $http) {
 
-  $scope.students = [];
+app.factory('students', [
+function(){
+  var all = {
+    students: []
+  };
+  return all;
+}]);
+
+app.controller('GitHubCtrl', ['$scope', '$http', 'students', function ($scope, $http, students) {
+
+  $scope.students = students.students;
+
+  $scope.incrementUpvotes = function(student) {
+    student.upvotes += 1;
+  };
 
   $scope.getGitInfo = function () {
     if(!$scope.username || $scope.username === '') { return; }
@@ -36,20 +51,37 @@ app.controller('GitHubCtrl', function ($scope, $http) {
     $http.get("https://api.github.com/users/" + $scope.username)
      .success(function (data) {
         if (data.name === "") data.name = data.login;
+        data.upvotes = 0;
         $scope.students.push(data);
         $scope.loaded = true;
      })
      .error(function () {
         $scope.userNotFound = true;
      });
-    $http.get("https://api.github.com/users/" + $scope.username + "/repos")
-      .success(function (data) {
-        $scope.repos = data;
-        $scope.reposFound = data.length > 0;
+    $http.get("https://api.github.com/users/" + $scope.username + "/repos").success(function (data) {
+      $scope.repos = data;
+      $scope.reposFound = data.length > 0;
     });
     $scope.username = '';
   };
-});
+}]);
+
+
+//dummy data for now. To be exctracted from db later
+  var student1 = {
+    name: "Essam",
+    subject: "Angular"
+  };
+  var student2 = {
+    name: "Victor",
+    subject: "D3"
+  };
+  var student3 = {
+    name: "Mike",
+    subject: "Backbone"
+  };
+
+  var students = [student1, student2, student3];
 
 
 app.controller('MentorCtrl', function ($scope, $http) {
@@ -61,12 +93,12 @@ app.controller('MentorCtrl', function ($scope, $http) {
           for (var i = 0; i < data.length; i++) {
           mentors.push((data[i].name));
         }
-        
+
       });
   };
 
   $scope.mentors = mentors;
-  
+
   $scope.showAllMentors();
 
 
@@ -100,7 +132,7 @@ app.controller('MentorCtrl', function ($scope, $http) {
           $('#totalReputation').show();
           createMentor(data);
         }
-        
+
         if (data.name === "") data.name = data.login;
         $scope.user = data;
         console.log(data);
@@ -122,7 +154,7 @@ app.controller('MentorCtrl', function ($scope, $http) {
       if (counter >= 1) {
         counter--;
         $('#reputation').html(counter);
-      }    
+      }
     }
   };
 
