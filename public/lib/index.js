@@ -146,6 +146,11 @@ app.controller('MentorCtrl',['$scope', '$http', 'students', function ($scope, $h
 
   $scope.mentors = students.mentors;
 
+  $scope.requestMentorship = function () {
+    $scope.studentOnWaitingList = "Essam Al Joubori"
+  };
+
+
   // var mentor1 = {
   //   name: "Scott Moss",
   //   reputation: 10
@@ -238,7 +243,7 @@ app.controller('MentorCtrl',['$scope', '$http', 'students', function ($scope, $h
     $scope.down = function() {
       if (counter >= 1) {
         counter--;
-        $('#reputation').html(counter);
+        $scope.counter = counter;
       }
     };
   };
