@@ -102,9 +102,6 @@ app.controller('GitHubCtrl', ['$scope', '$http', 'students', function ($scope, $
     $scope.username = 'mcpike';
     $scope.getGitInfo();
 
-    $scope.username = 'fr332th1nk';
-    $scope.getGitInfo();
-
     $scope.username = 'rohanagrawal';
     $scope.getGitInfo();
 

@@ -15,7 +15,7 @@
   <hr>
 
   <div class="panel panel-default">
-    <div class="panel-heading">Contributions to open source project</div>
+    <div class="panel-heading"><h1 class="text-center">Contributions to Open Source Project </h1></div>
     <div class="panel-body">
       <div class="ghcontent" ng-repeat="student in students | orderBy:'-upvotes'">
         <div class="media">
@@ -28,6 +28,7 @@
               <span class="smallname">(@<a href="{{student.html_url}}" target="_blank"> {{student.login}} </a>)</span>
             </h4>
             <p>Followers: {{ student.followers }} | Following: {{ student.following }} | Repos: {{ student.public_repos }} | upvotes: {{student.upvotes}}</p>
+            <button class="btn btn-default">Accept to be my Mentee</button>
           </div>
         </div>
         <hr>
