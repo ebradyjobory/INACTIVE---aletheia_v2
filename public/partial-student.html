@@ -5,7 +5,7 @@
       <div class="input-group input-group-lg">
         <input type="text" class="form-control" id="ghusername" placeholder="Enter a Github username" ng-model="username">
         <span class="input-group-btn">
-          <button type="submit" id="ghsubmitbtn" class="btn btn-default search">Become a mentee</button>
+          <button type="submit" id="ghsubmitbtn" class="btn btn-primary search">Want to be a Mentee</button>
         </span>
         <div id="ghapidata" class="clearfix"></div>
       </div>
@@ -17,19 +17,15 @@
   <div class="panel panel-default">
     <div class="panel-heading">Contributions to open source project</div>
     <div class="panel-body">
-<!--       <div ng-show="userNotFound">
-          <h2>No User Info Found</h2>
-       </div> -->
-
       <div class="ghcontent" ng-repeat="student in students | orderBy:'-upvotes'">
         <div class="media">
+          <span ng-click="incrementUpvotes(student)"><button class="btn btn-default pull-right"><i class="fa fa-thumbs-o-up fa-5x"></i> </button></span>
           <a class="media-left"  href="{{ student.html_url }}" target="_blank">
             <img class="profile-image" src="{{ student.avatar_url }}" alt="{{ student.login }}">
           </a>
           <div class="media-body">
             <h4 class="media-heading">{{student.name}}
               <span class="smallname">(@<a href="{{student.html_url}}" target="_blank"> {{student.login}} </a>)</span>
-              <span ng-click="incrementUpvotes(student)">| Thumbs up <i class="fa fa-thumbs-o-up"></i></span>
             </h4>
             <p>Followers: {{ student.followers }} | Following: {{ student.following }} | Repos: {{ student.public_repos }} | upvotes: {{student.upvotes}}</p>
           </div>
@@ -39,6 +35,10 @@
     </div>
   </div>
 </div>
+
+<!--       <div ng-show="userNotFound">
+          <h2>No User Info Found</h2>
+       </div> -->
 
 <!--                 <div class="repolist clearfix">
                  <p ng-hide="reposFound">No repos!</p>
