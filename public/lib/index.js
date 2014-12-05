@@ -89,6 +89,11 @@ app.controller('MentorCtrl',['$scope', '$http', 'students', function ($scope, $h
 
   $scope.mentors = students.mentors;
 
+  $scope.requestMentorship = function () {
+    $scope.studentOnWaitingList = students.students
+  };
+
+
   // var mentor1 = {
   //   name: "Scott Moss",
   //   reputation: 10
