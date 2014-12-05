@@ -1,20 +1,6 @@
 <div class="container" ng-controller="MentorCtrl">
 
 <h3>Please enter mentor's github username to start.</h3>
-<h4>List of current mentors</h4>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Name of mentor</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat="mentor in mentors track by $index">
-      <td>{{mentor}}</td>
-      </tr>
-    </tbody>
-  </table>
 
 
 <form role="form">
@@ -63,7 +49,7 @@
           </div>
        </div>
        <div id="studentsTable" style="display: none" >
-    <table class="table table-striped" style="width: 50%">
+    <!-- <table class="table table-striped" style="width: 50%">
       <thead>
         <tr>
           <th>Name of Student</th>
@@ -72,23 +58,49 @@
       <tbody>
         <tr ng-repeat="mentor in mentors track by $index">
           <td>
-            {{mentor}}
+            <a href="#">{{mentor}}</a>
           </td>
         </tr>
       </tbody>
       </table>
       <button class="btn btn-primary" ng-click="showMentors()">Show Mentors</button>
     </div>
-    </table>
+    </table> -->
+    <br>
+    <br>
+    <div>
+      <button class="btn btn-success" ng-click="requestMentorship()">Request Mentorship</button>
+    </div>
     <div id="totalReputation" style="display: none">
-      <h3>Reputation: <span id="reputation"></span></h3>  <!-- counter for now -->
+      <h4>Reputation: {{counter}} <span id="reputation"></span></h4>  <!-- counter for now -->
       <button class="btn btn-success" ng-click="up()">Up</button>
       <button class="btn btn-danger" ng-click="down()">Down</button>
     </div>
+    <br>
+    <br>
+    <button class="btn btn-default" ng-click="createNewMentor()">Save</button>
 
     </div>
   </div>
+
 </div>
+<h4>List of current mentors</h4>
+  <table class="table" style="width: 20%;">
+    <thead>
+      <tr>
+        <th>Name of mentor</th>
+        <th>Reputation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="mentor in mentors track by $index">
+        <td><strong>{{mentor.name}}</strong></td>
+        <td><strong>{{mentor.reputation}}</strong></td>
+      </tr>
+    </tbody>
+  </table>
+  <br>
+  <br>
 <!-- 
   <form role="form">
     <div class="col-md-6">

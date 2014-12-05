@@ -1,5 +1,5 @@
 var app = angular.module('App', ['ui.router']);
-
+//example Hendrixer <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Scott Moss
 app.config(function($stateProvider, $urlRouterProvider) {
   $urlRouterProvider.otherwise('/');
   $stateProvider
@@ -54,22 +54,44 @@ app.controller('GitHubCtrl', function ($scope, $http) {
 
 app.controller('MentorCtrl', function ($scope, $http) {
 
-  var mentors =[];
-  $scope.showAllMentors = function() {
-      $http.get('/mentor')
-        .success(function(data){
-          for (var i = 0; i < data.length; i++) {
-          mentors.push((data[i].name));
-        }
-        
-      });
+  var mentor1 = {
+    name: "Scott Moss",
+    reputation: 10
   };
-
-  $scope.mentors = mentors;
+  var mentor2 ={
+    name: "Mike",
+    reputation: 5
+  };
+  var mentor3 ={
+    name: "Dave",
+    reputation: 8
+  };
   
-  $scope.showAllMentors();
+  //$scope.mentors = [mentor1, mentor2, mentor3];
+
+  $scope.createNewMentor = function(){
+   console.log("saved!");
+   $scope.mentors.push({name: $scope.user.name, reputation: $scope.counter});
+   console.log($scope.mentors);
+  }
+  console.log($scope.mentors, mentor1, mentor2, mentor3);
+
+  // $scope.showAllMentors = function() {
+  //     $http.get('/mentor')
+  //       .success(function(data){
+  //         for (var i = 0; i < data.length; i++) {
+  //         mentors.push((data[i].name));
+  //       }
+        
+  //     });
+  // };
+
+  // $scope.mentors = mentors;
+
+  // $scope.showAllMentors();
 
 
+  var mentorName;
   $scope.getGitInfo = function () {
     createMentor = function(data) {
       console.log('createMentor', data);
@@ -90,7 +112,7 @@ app.controller('MentorCtrl', function ($scope, $http) {
     };
 
     $scope.mentors = mentors;
-    console.log(mentors);
+   
     $scope.userNotFound = false;
     $scope.loaded = false;
     $http.get("https://api.github.com/users/" + $scope.username)
@@ -114,14 +136,17 @@ app.controller('MentorCtrl', function ($scope, $http) {
       $scope.reposFound = data.length > 0;
     });
     var counter = 0;
+    $scope.reputation = counter;
     $scope.up = function() {
       counter++;
-      $('#reputation').html(counter);
+      //$('#reputation').html(counter);
+      $scope.counter = counter;
     };
     $scope.down = function() {
       if (counter >= 1) {
         counter--;
-        $('#reputation').html(counter);
+        //$('#reputation').html(counter);
+        $scope.counter = counter;
       }    
     }
   };
