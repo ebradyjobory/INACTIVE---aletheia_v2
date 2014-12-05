@@ -1,4 +1,5 @@
 <div ng-controller="GitHubCtrl">
+
   <form role="form" ng-submit="getGitInfo()">
     <div class="col-md-6">
       <div class="input-group input-group-lg">
@@ -16,9 +17,9 @@
   <div class="panel panel-default">
     <div class="panel-heading">Contributions to open source project</div>
     <div class="panel-body">
-      <div ng-show="userNotFound">
+<!--       <div ng-show="userNotFound">
           <h2>No User Info Found</h2>
-       </div>
+       </div> -->
 
       <div class="ghcontent" ng-repeat="student in students | orderBy:'-upvotes'">
         <div class="media">

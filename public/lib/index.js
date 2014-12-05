@@ -59,14 +59,71 @@ app.controller('GitHubCtrl', ['$scope', '$http', 'students', function ($scope, $
      .error(function () {
         $scope.userNotFound = true;
      });
+    $scope.username = '';
+  };
+
+  var init = function(){
+    $scope.username = 'therobinkim';
+    $scope.getGitInfo();
+
+    $scope.username = 'brettdewoody';
+    $scope.getGitInfo();
+
+    $scope.username = 'elderbas';
+    $scope.getGitInfo();
+
+    $scope.username = 'davemun';
+    $scope.getGitInfo();
+
+    $scope.username = 'drabinowitz';
+    $scope.getGitInfo();
+
+    $scope.username ='essamjoubori';
+    $scope.getGitInfo();
+
+    $scope.username = 'Cheerazar' ;
+    $scope.getGitInfo();
+
+    $scope.username = 'jDeppen';
+    $scope.getGitInfo();
+
+    $scope.username = 'JulieMarie';
+    $scope.getGitInfo();
+
+    $scope.username = 'linglau5000';
+    $scope.getGitInfo();
+
+    $scope.username = 'nicmitchell';
+    $scope.getGitInfo();
+
+    $scope.username = 'plauer';
+    $scope.getGitInfo();
+
+    $scope.username = 'mcpike';
+    $scope.getGitInfo();
+
+    $scope.username = 'fr332th1nk';
+    $scope.getGitInfo();
+
+    $scope.username = 'rohanagrawal';
+    $scope.getGitInfo();
+
+    $scope.username = 'roryc89';
+    $scope.getGitInfo();
+
+    $scope.username = 'sjstebbins';
+    $scope.getGitInfo();
+
+    $scope.username = '';
+  };
+
+  init();
+}]);
+
     // $http.get("https://api.github.com/users/" + $scope.username + "/repos").success(function (data) {
     //   $scope.repos = data;
     //   $scope.reposFound = data.length > 0;
     // });
-    $scope.username = '';
-  };
-}]);
-
 
 //dummy data for now. To be exctracted from db later
   var student1 = {
