@@ -20,32 +20,32 @@
           <h2>No User Info Found</h2>
        </div>
 
-          <div class="ghcontent" ng-repeat="student in students">
-            <div class="media">
-              <a class="media-left"  href="{{ student.html_url }}" target="_blank">
-                <img class="profile-image" src="{{ student.avatar_url }}" alt="{{ student.login }}">
-              </a>
-              <div class="media-body">
-                <h4 class="media-heading">{{student.name}}
-                  <span class="smallname">(@<a href="{{student.html_url}}" target="_blank"> {{student.login}} </a>)</span>
-                </h4>
-                  Followers: {{ student.followers }} - Following: {{ student.following }}<br>
-                  <p>Repos: {{ student.public_repos }}</p>
-                  <div class="repolist clearfix">
-             <p ng-hide="reposFound">No repos!</p>
-
-               <div ng-show="reposFound">
-                  <p><strong>Repos List:</strong></p>
-                  <span ng-repeat="repo in repos" >
-                     <span class="label label-primary">{{repo.name}}</span>
-                  </span>
-               </div>
+      <div class="ghcontent" ng-repeat="student in students | orderBy:'-upvotes'">
+        <div class="media">
+          <a class="media-left"  href="{{ student.html_url }}" target="_blank">
+            <img class="profile-image" src="{{ student.avatar_url }}" alt="{{ student.login }}">
+          </a>
+          <div class="media-body">
+            <h4 class="media-heading">{{student.name}}
+              <span class="smallname">(@<a href="{{student.html_url}}" target="_blank"> {{student.login}} </a>)</span>
+              <span ng-click="incrementUpvotes(student)">| Thumbs up <i class="fa fa-thumbs-o-up"></i></span>
+            </h4>
+            <p>Followers: {{ student.followers }} | Following: {{ student.following }} | Repos: {{ student.public_repos }} | upvotes: {{student.upvotes}}</p>
           </div>
-              </div>
-            </div>
-          </div>
-
-
+        </div>
+        <hr>
+      </div>
     </div>
   </div>
 </div>
+
+<!--                 <div class="repolist clearfix">
+                 <p ng-hide="reposFound">No repos!</p>
+
+                 <div ng-show="reposFound">
+                  <p><strong>Repos List:</strong></p>
+                   <span ng-repeat="repo in repos" >
+                     <span class="label label-primary">{{repo.name}}</span>
+                   </span>
+                 </div>
+                </div> -->
