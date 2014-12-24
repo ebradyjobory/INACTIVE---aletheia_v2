@@ -1,247 +1,108 @@
 var app = angular.module('App', ['ui.router']);
-//example Hendrixer <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< Scott Moss
-app.config(function($stateProvider, $urlRouterProvider) {
 
+app.config(function($stateProvider, $urlRouterProvider) {
+ 
   $stateProvider
     .state('home', {
       url: '/',
       templateUrl: 'partial-home.html'
-    })
-    .state('student', {
-      url: '/student',
-      templateUrl: 'partial-student.html'
-    })
-    .state('mentor', {
-      url: '/mentor',
-      templateUrl: 'partial_mentor.html'
-    })
-    .state('signin', {
-      url: '/signin',
-      templateUrl: 'partial-signin.html'
-    })
-    .state('signup', {
-      url: '/signup',
-      templateUrl: 'partial-signup.html'
     });
-
     $urlRouterProvider.otherwise('/');
 });
 
-
-app.factory('students', [
-function(){
-  var all = {
-    students: [],
-    mentors: [{name:'Dougs', reputation: 5}, {name:'Marcus', reputation: 1000}, {name:'Shawn', reputation: -10}]
-  };
-  return all;
-}]);
-
-app.controller('GitHubCtrl', ['$scope', '$http', 'students', function ($scope, $http, students) {
-
-  $scope.students = students.students;
-
-  $scope.incrementUpvotes = function(student) {
-    student.upvotes += 1;
-  };
-
-  $scope.getGitInfo = function () {
-    if(!$scope.username || $scope.username === '') { return; }
-    $scope.userNotFound = false;
-    $scope.loaded = false;
-    $http.get("https://api.github.com/users/" + $scope.username)
-     .success(function (data) {
-        if (data.name === "") data.name = data.login;
-        data.upvotes = 0;
-        $scope.students.push(data);
-        $scope.loaded = true;
-     })
-     .error(function () {
-        $scope.userNotFound = true;
-     });
-    $scope.username = '';
-  };
-
-  var init = function(){
-    $scope.username = 'therobinkim';
-    $scope.getGitInfo();
-
-    $scope.username = 'brettdewoody';
-    $scope.getGitInfo();
-
-    $scope.username = 'elderbas';
-    $scope.getGitInfo();
-
-    $scope.username = 'davemun';
-    $scope.getGitInfo();
-
-    $scope.username = 'drabinowitz';
-    $scope.getGitInfo();
-
-    $scope.username = 'Cheerazar' ;
-    $scope.getGitInfo();
-
-    $scope.username = 'jDeppen';
-    $scope.getGitInfo();
-
-    $scope.username = 'JulieMarie';
-    $scope.getGitInfo();
-
-    $scope.username = 'linglau5000';
-    $scope.getGitInfo();
-
-    $scope.username = 'nicmitchell';
-    $scope.getGitInfo();
-
-    $scope.username = 'plauer';
-    $scope.getGitInfo();
-
-    $scope.username = 'mcpike';
-    $scope.getGitInfo();
-
-    $scope.username = 'rohanagrawal';
-    $scope.getGitInfo();
-
-    $scope.username = 'roryc89';
-    $scope.getGitInfo();
-
-    $scope.username = 'sjstebbins';
-    $scope.getGitInfo();
-
-    $scope.username = '';
-  };
-
-  init();
-}]);
-
-    // $http.get("https://api.github.com/users/" + $scope.username + "/repos").success(function (data) {
-    //   $scope.repos = data;
-    //   $scope.reposFound = data.length > 0;
-    // });
-
-//dummy data for now. To be exctracted from db later
-  var student1 = {
-    name: "Essam",
-    subject: "Angular"
-  };
-  var student2 = {
-    name: "Victor",
-    subject: "D3"
-  };
-  var student3 = {
-    name: "Mike",
-    subject: "Backbone"
-  };
-
-  var students = [student1, student2, student3];
-
-
-app.controller('MentorCtrl',['$scope', '$http', 'students', function ($scope, $http, students) {
-
-  $scope.mentors = students.mentors;
-
-  $scope.requestMentorship = function () {
-    // $scope.studentOnWaitingList = "Essam Al Joubori";
-    $scope.studentOnWaitingList = "Victor Leung";
-  };
-
-
-  // var mentor1 = {
-  //   name: "Scott Moss",
-  //   reputation: 10
-  // };
-  // var mentor2 ={
-  //   name: "Mike",
-  //   reputation: 5
-  // };
-  // var mentor3 ={
-  //   name: "Dave",
-  //   reputation: 8
-  // };
-
-  //$scope.mentors = [mentor1, mentor2, mentor3];
-
-  $scope.createNewMentor = function(){
-   console.log("saved!");
-   $scope.mentors.push({name: $scope.user.name, reputation: $scope.counter});
-   console.log($scope.mentors);
-  };
-  // console.log($scope.mentors, mentor1, mentor2, mentor3);
-
-  // $scope.showAllMentors = function() {
-  //     $http.get('/mentor')
-  //       .success(function(data){
-  //         for (var i = 0; i < data.length; i++) {
-  //         mentors.push((data[i].name));
-  //       }
-
-  //     });
-  // };
-
-  // $scope.mentors = mentors;
-
-  // $scope.showAllMentors();
-
-
-
-  var mentorName;
-  $scope.getGitInfo = function () {
-    createMentor = function(data) {
-      console.log('createMentor', data);
-      $http.post('/mentor', data)
-        .success(function(res){
-          console.log('res after posting into db', JSON.stringify(res) );
-        });
-    };
-    var mentors = [];
-    $scope.showMentors = function() {
-      $http.get('/mentor')
-        .success(function(data){
-          for (var i = 0; i < data.length; i++) {
-          mentors.push((data[i].name));
-          console.log(mentors);
-        }
-      });
-    };
-
-    $scope.mentors = mentors;
-
-    $scope.userNotFound = false;
-    $scope.loaded = false;
-    $http.get("https://api.github.com/users/" + $scope.username)
-     .success(function (data) {
-        if ($scope.username !== undefined) {
-          $('#studentsTable').show();
-          $('#totalReputation').show();
-          createMentor(data);
-        }
-
-        if (data.name === "") data.name = data.login;
-        $scope.user = data;
-        console.log(data);
-        $scope.loaded = true;
-     })
-     .error(function () {
-        $scope.userNotFound = true;
-     });
-    $http.get("https://api.github.com/users/" + $scope.username + "/repos").success(function (data) {
-      $scope.repos = data;
-      $scope.reposFound = data.length > 0;
-    });
-    var counter = 0;
-    $scope.reputation = counter;
-    $scope.up = function() {
-      counter++;
-      //$('#reputation').html(counter);
-      $scope.counter = counter;
-    };
-    $scope.down = function() {
-      if (counter >= 1) {
-        counter--;
-        $scope.counter = counter;
+app.controller('MapCtrl', ['$scope', '$http', function ($scope, $http) {
+  
+  var val = "#ferguson";
+  $scope.search = {
+    val: function(newSubject){
+      if(angular.isDefined(newSubject)) {
+        val = newSubject;
       }
-    };
-  };
+      return val;
+    }
+  }
+
+
+
+  var width = 1680,
+      height = 800,
+      active = d3.select(null);
+
+  var projection = d3.geo.albersUsa()
+      .scale(1600)
+      .translate([width / 2, height / 2]);
+
+  var path = d3.geo.path()
+      .projection(projection);
+  //var board = document.getElementById('us-map');
+  var svg = d3.select('body').append("svg")
+      .attr("width", width)
+      .attr("height", height);
+
+  svg.append("rect")
+      .attr("class", "background")
+      .attr("width", width)
+      .attr("height", height)
+      .on("click", reset);
+
+  var g = svg.append("g")
+      .style("stroke-width", "1.5px");
+
+  d3.json("lib/states.json", function(error, us) {
+    g.selectAll("path")
+        .data(topojson.feature(us, us.objects.states).features)
+        .enter().append("path")
+        .attr("d", path)
+        .attr("class", "feature")
+        .on("click", clicked);
+        //console.log(us.objects.states.geometries[0]);
+
+    g.append("path")
+        .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+        .attr("class", "mesh")
+        .attr("d", path);
+  });
+
+  function clicked(d) {
+    if (active.node() === this) return reset();
+    
+    d3.json('lib/geo.json', function(err, data) {
+      bbox = (data[d.id]);
+      console.log(bbox);
+      $http.post('/map', {geo: bbox, subject: $scope.search.val()})
+        .success(function(data){
+          for (var i = 0; i < data.length; i++){
+            console.log(data[i]);
+          }
+        });
+    });
+    
+    active.classed("active", false);
+    active = d3.select(this).classed("active", true);
+
+    var bounds = path.bounds(d),
+        dx = bounds[1][0] - bounds[0][0],
+        dy = bounds[1][1] - bounds[0][1],
+        x = (bounds[0][0] + bounds[1][0]) / 2,
+        y = (bounds[0][1] + bounds[1][1]) / 2,
+        scale = .9 / Math.max(dx / width, dy / height),
+        translate = [width / 2 - scale * x, height / 2 - scale * y];
+
+    g.transition()
+        .duration(750)
+        .style("stroke-width", 1.5 / scale + "px")
+        .attr("transform", "translate(" + translate + ")scale(" + scale + ")");
+  }
+
+  function reset() {
+    active.classed("active", false);
+    active = d3.select(null);
+
+    g.transition()
+        .duration(750)
+        .style("stroke-width", "1.5px")
+        .attr("transform", "");
+  }
+
 
 }]);
-
