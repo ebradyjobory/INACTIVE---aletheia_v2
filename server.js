@@ -18,11 +18,13 @@ app.set('views', __dirname + 'public');
 
 
 var appInfo = JSON.parse(process.env.VCAP_APPLICATION || "{}");
+
 // defaults for dev outside bluemix
 var service_url = "https://gateway.watsonplatform.net/systemu/service/";
 var service_username = "12312a68-fdff-4064-9928-eb088a960815";
 var service_password = "KUwy0neR5kpV";
 
+// Twitter config
 var T = new Twit({
         consumer_key:         'nnnMzv63aJKbQgzF77vQLXCm0'
       , consumer_secret:      'BAG1XL3PHUVw6AsW7K0dRcIv6qkITkWARmZL9Bb8nOKfTkbTpo'
@@ -59,39 +61,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.get('/', function(req, res){
-
+  // index.html will be rendered on '/'
 });
 
-// app.post('/map', function(req, res){
-//   console.log(req.body.geo);
-
-//   T.get('search/tweets', {q: '#ferguson', geo_enabled: true}, function(error, data, response){
-
-//     res.send(data);
-
-//   });  
-// });
 var dataFromTwitter="";
+
 app.post('/map', function(req, res){
-  console.log('POST WAS CALLED ====================');
+
+  console.log('Data received from font-end ==================================================');
   console.log(req.body.geo);
   console.log(req.body.subject);
+  console.log('End of data received from font-end ===========================================');
 
-  //===========Twitter =============
-
-  // T.get('favorites/list', function(error, data, response){
-
-  //   console.log('data', data);  // The favorites.
-
-  //   //console.log(response);  // Raw response object.
-
-  // });
-
-  T.get('search/tweets', { q: ''+req.body.subject+' since:2014-12-01', count: 5000 }, function(err, data, response) {
-    //console.log(data);
-    dataFromTwitter +=(data);
-  });
-  //================================
   // See User Modeling API docs. Path to profile analysis is /api/v2/profile
   // remove the last / from service_url if exist
   var parts = url.parse(service_url.replace(/\/$/,''));
@@ -106,14 +87,21 @@ app.post('/map', function(req, res){
     };
     
   // create a profile request with the text and the htpps options and call it
-  T.get('search/tweets', { q: ''+req.body.subject+' since:2014-10-01', count: 5000 }, function(err, data, response) {
-   //console.log('data from twitter', data.statuses[2].text);
-   for(var i =0; i < data.statuses.length; i++ ) {
-    dataFromTwitter+= data.statuses[i].text
-   }
+  // `req.body.subject` is the subject that was entered by the end user
+  // TODO: to have the end user enter the data
+  T.get('search/tweets', { q: ''+req.body.subject+' since:2014-10-01', 
+                           count: 5000, geo_enabled: true },
+                           function(err, data, response) {
+
+    for(var i = 0; i < data.statuses.length; i++ ) {
+      // accumulate the data (each tweet as a text) received from twitter
+      dataFromTwitter += data.statuses[i].text;
+    }
+
+    // ***************** DO NOT MODIFY ********************************
+    // ================  Watson analysis ==============================
     create_profile_request(profile_options, dataFromTwitter)(function(error,profile_string) {
-      console.log('dataFromTwitter', dataFromTwitter)
-      console.log('Hello from Watson!')
+      console.log('dataFromTwitter', dataFromTwitter);
       if (error) console.log(error);
       else {
         // parse the profile and format it
@@ -128,9 +116,8 @@ app.post('/map', function(req, res){
         create_viz_request(viz_options,profile_string)(function(error,viz) {
           if (error) res.render('index',{'error': error.message});
           else {
-            //Here we get the results from Watson
+            //Here we get the results from Watson and send it back to the client
             res.send(flat_traits);
-            //return res.render('index', {'content': req.body.content, 'traits': flat_traits, 'viz':viz});
           };
         });
       }

@@ -21,9 +21,8 @@ app.controller('MapCtrl', ['$scope', '$http', function ($scope, $http) {
       return val;
     }
   }
-
-
-
+  // D3 =========================
+  // we define d3 us-map here
   var width = 1680,
       height = 800,
       active = d3.select(null);
@@ -65,12 +64,16 @@ app.controller('MapCtrl', ['$scope', '$http', function ($scope, $http) {
 
   function clicked(d) {
     if (active.node() === this) return reset();
-    
+    // ========= The link between front and server ===============
     d3.json('lib/geo.json', function(err, data) {
       bbox = (data[d.id]);
       console.log(bbox);
+      // sending data (geo location and the end user search criteria) to server
+      // a post request with data to twitter
       $http.post('/map', {geo: bbox, subject: $scope.search.val()})
         .success(function(data){
+          // on success, the `data` is the data from Watson
+          // the data is the big 5 for a collection of tweets
           for (var i = 0; i < data.length; i++){
             console.log(data[i]);
           }
@@ -103,6 +106,6 @@ app.controller('MapCtrl', ['$scope', '$http', function ($scope, $http) {
         .style("stroke-width", "1.5px")
         .attr("transform", "");
   }
-
+  // ========= end of D3 us-map ======================
 
 }]);
