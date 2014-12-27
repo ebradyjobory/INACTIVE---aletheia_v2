@@ -8,7 +8,8 @@ var url = require('url');
 var querystring = require('querystring');
 var extend = require('util')._extend;
 var flatten = require('./flatten');
-var dummy_text = require('./dummy_text').text;
+// TODO: To be removed from app files
+// var dummy_text = require('./dummy_text').text;
 
 
 var app = express();
@@ -89,17 +90,25 @@ app.post('/map', function(req, res){
   // create a profile request with the text and the htpps options and call it
   // `req.body.subject` is the subject that was entered by the end user
   // TODO: to have the end user enter the data
-  T.get('search/tweets', { q: ''+req.body.subject+' since:2014-10-01', 
-                           count: 5000, geo_enabled: true },
-                           function(err, data, response) {
+  // T.get('search/tweets', { q: ''+req.body.subject+' since:2014-10-01', 
+  //                          count: 5000, geo_enabled: 'true', lang: 'en', location: req.body.geo },
+  //                          function(err, data, response) {
 
-    for(var i = 0; i < data.statuses.length; i++ ) {
-      // accumulate the data (each tweet as a text) received from twitter
-      dataFromTwitter += data.statuses[i].text;
-    }
+  //   for(var i = 0; i < data.statuses.length; i++ ) {
+  //     // accumulate the data (each tweet as a text) received from twitter
+  //     console.log(data.statuses)
+  //     dataFromTwitter += data.statuses[i].text;
+  //   }
+    var stream = T.stream('statuses/filter', { locations: req.body.geo,
+                           track: req.body.subject, 
+                           lang: 'en', geo_enabled: true });
 
+    stream.on('tweet', function (tweet) {
+      dataFromTwitter += tweet.text;
     // ***************** DO NOT MODIFY ********************************
     // ================  Watson analysis ==============================
+    if (dataFromTwitter.length > 500) {
+
     create_profile_request(profile_options, dataFromTwitter)(function(error,profile_string) {
       console.log('dataFromTwitter', dataFromTwitter);
       if (error) console.log(error);
@@ -117,11 +126,15 @@ app.post('/map', function(req, res){
           if (error) res.render('index',{'error': error.message});
           else {
             //Here we get the results from Watson and send it back to the client
-            res.send(flat_traits);
+            res.write(JSON.stringify(flat_traits));
+            res.end();
           };
         });
       }
     });
+    }
+    //======== end Watson analysis ===============================
+
   });
 
 });

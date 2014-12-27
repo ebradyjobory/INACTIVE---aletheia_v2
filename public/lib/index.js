@@ -17,7 +17,7 @@
 
     $scope.search = {
       val: function(newSubject){
-        if(!angular.isDefined(newSubject)) {
+        if(angular.isDefined(newSubject)) {
           _val = newSubject;
         }
         return _val;
@@ -73,7 +73,7 @@
         console.log(bbox);
         // sending data (geo location and the end user search criteria) to server
         // a post request with data to twitter
-        $http.post('/map', {geo: bbox, subject: $scope.search.val})
+        $http.post('/map', {geo: bbox, subject: $scope.search.val })
           .success(function(data){
             // on success, the `data` is the data from Watson
             // the data is the big 5 for a collection of tweets
