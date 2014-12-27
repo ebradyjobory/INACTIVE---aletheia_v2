@@ -77,9 +77,7 @@
           .success(function(data){
             // on success, the `data` is the data from Watson
             // the data is the big 5 for a collection of tweets
-            for (var i = 0; i < data.length; i++){
-              console.log(data[i]);
-            }
+            console.log(data);
           });
       });
       

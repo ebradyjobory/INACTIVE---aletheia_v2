@@ -1,4 +1,6 @@
 var path = require('path');
+var Promise = require("bluebird");
+var get = Promise.promisifyAll(require("request"));
 var express = require('express');
 var bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
@@ -10,7 +12,6 @@ var extend = require('util')._extend;
 var flatten = require('./flatten');
 // TODO: To be removed from app files
 // var dummy_text = require('./dummy_text').text;
-
 
 var app = express();
 
@@ -65,10 +66,12 @@ app.get('/', function(req, res){
   // index.html will be rendered on '/'
 });
 
-var dataFromTwitter="";
+var dataFromTwitterUS="";
+var dataFromTwitterPerState="";
+var flatTraitsArray = {USdata: null, stateData: null};
 
 app.post('/map', function(req, res){
-
+  var res = res;
   console.log('Data received from font-end ==================================================');
   console.log(req.body.geo);
   console.log(req.body.subject);
@@ -76,8 +79,78 @@ app.post('/map', function(req, res){
 
   // See User Modeling API docs. Path to profile analysis is /api/v2/profile
   // remove the last / from service_url if exist
+ 
+    
+  // create a profile request with the text and the htpps options and call it
+  // `req.body.subject` is the subject that was entered by the end user
+  // TODO: to have the end user enter the date
+  var analyzeState = function () {
+    console.log('analyzeState')
+    T.get('search/tweets', { q: ''+req.body.subject+' since:2014-10-01', 
+                             count: 5000, lang: 'en' },
+                             function(err, data, response) {
+      console.log(data.statuses.length)
+      for(var i = 0; i < data.statuses.length; i++) {
+        // accumulate the data (each tweet as a text) received from twitter
+        //console.log(data.statuses[i].text)
+        dataFromTwitterPerState += data.statuses[i].text;
+      }
+      watson(dataFromTwitterPerState, res, false);
+      // var stream = T.stream('statuses/filter', { locations: req.body.geo,
+      //                        track: req.body.subject, 
+      //                        lang: 'en', geo_enabled: true });
+
+      // stream.on('tweet', function (tweet) {
+      //   dataFromTwitter += tweet.text;
+      //   if (dataFromTwitter.length < 1000) {
+      //   } else {
+      //     analyzeWithWatson(dataFromTwitter);
+      //     stream.stop();
+      //   }
+      // });
+      // ***************** DO NOT MODIFY ********************************
+      // ================  Watson analysis ==============================
+
+    });
+  };
+
+  var analyzeNation = function() {
+    console.log('analyzeNation')
+    var geoUS = ['39.8','-95.583068847656','2500km']
+    T.get('search/tweets', { q: ''+req.body.subject+' since:2014-10-01', 
+                             count: 5000, geocode: geoUS , lang: 'en' },
+                             function(err, data, response) {
+
+      for(var i = 0; i < data.statuses.length; i++) {
+        // accumulate the data (each tweet as a text) received from twitter
+        //console.log(data.statuses[i].text)
+        dataFromTwitterUS += data.statuses[i].text;
+      }
+      watson(dataFromTwitterUS, res, true);
+      analyzeState();
+      // var stream = T.stream('statuses/filter', { locations: req.body.geo,
+      //                        track: req.body.subject, 
+      //                        lang: 'en', geo_enabled: true });
+
+      // stream.on('tweet', function (tweet) {
+      //   dataFromTwitter += tweet.text;
+      //   if (dataFromTwitter.length < 1000) {
+      //   } else {
+      //     analyzeWithWatson(dataFromTwitter);
+      //     stream.stop();
+      //   }
+      // });
+      // ***************** DO NOT MODIFY ********************************
+
+    });
+  };
+  analyzeNation();
+}); 
+
+// ================  Watson analysis ==============================
+var watson =  function(data, res, called) {
+
   var parts = url.parse(service_url.replace(/\/$/,''));
-  
   var profile_options = { host: parts.hostname,
     port: parts.port,
     path: parts.pathname + "/api/v2/profile",
@@ -86,58 +159,37 @@ app.post('/map', function(req, res){
       'Content-Type'  :'application/json',
       'Authorization' :  auth }
     };
-    
-  // create a profile request with the text and the htpps options and call it
-  // `req.body.subject` is the subject that was entered by the end user
-  // TODO: to have the end user enter the data
-  // T.get('search/tweets', { q: ''+req.body.subject+' since:2014-10-01', 
-  //                          count: 5000, geo_enabled: 'true', lang: 'en', location: req.body.geo },
-  //                          function(err, data, response) {
 
-  //   for(var i = 0; i < data.statuses.length; i++ ) {
-  //     // accumulate the data (each tweet as a text) received from twitter
-  //     console.log(data.statuses)
-  //     dataFromTwitter += data.statuses[i].text;
-  //   }
-    var stream = T.stream('statuses/filter', { locations: req.body.geo,
-                           track: req.body.subject, 
-                           lang: 'en', geo_enabled: true });
+  create_profile_request(profile_options, data)(function(error,profile_string) {
+    console.log('dataFromTwitterUS', data);
+    if (error) console.log(error);
+    else {
+      // parse the profile and format it
+      var profile_json = JSON.parse(profile_string);
+      var flat_traits = flatten.flat(profile_json.tree);
 
-    stream.on('tweet', function (tweet) {
-      dataFromTwitter += tweet.text;
-    // ***************** DO NOT MODIFY ********************************
-    // ================  Watson analysis ==============================
-    if (dataFromTwitter.length > 500) {
+      // Extend the profile options and change the request path to get the visualization
+      // Path to visualization is /api/v2/visualize, add w and h to get 900x900 chart
+      var viz_options = extend(profile_options, { path :  parts.pathname + "/api/v2/visualize?w=900&h=900&imgurl=%2Fimages%2Fapp.png"})
 
-    create_profile_request(profile_options, dataFromTwitter)(function(error,profile_string) {
-      console.log('dataFromTwitter', dataFromTwitter);
-      if (error) console.log(error);
-      else {
-        // parse the profile and format it
-        var profile_json = JSON.parse(profile_string);
-        var flat_traits = flatten.flat(profile_json.tree);
-
-        // Extend the profile options and change the request path to get the visualization
-        // Path to visualization is /api/v2/visualize, add w and h to get 900x900 chart
-        var viz_options = extend(profile_options, { path :  parts.pathname + "/api/v2/visualize?w=900&h=900&imgurl=%2Fimages%2Fapp.png"})
-
-        // create a visualization request with the profile data
-        create_viz_request(viz_options,profile_string)(function(error,viz) {
-          if (error) res.render('index',{'error': error.message});
-          else {
-            //Here we get the results from Watson and send it back to the client
-            res.write(JSON.stringify(flat_traits));
-            res.end();
-          };
-        });
-      }
-    });
+      // create a visualization request with the profile data
+      create_viz_request(viz_options,profile_string)(function(error,viz) {
+        if (error) res.render('index',{'error': error.message});
+        else {
+          //Here we get the results from Watson and send it back to the client
+          //console.log(flat_traits);
+          if (called) {
+            flatTraitsArray.USdata = flat_traits;
+          } else {
+            flatTraitsArray.stateData = flat_traits;
+            res.send(flatTraitsArray);
+          }
+        }
+      });
     }
-    //======== end Watson analysis ===============================
-
   });
-
-});
+};
+//======== end Watson analysis =============================== 
 
 // creates a request function using the https options and the text in content
 // the function that return receives a callback
