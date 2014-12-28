@@ -9,15 +9,17 @@ var https = require('https');
 var url = require('url');
 var querystring = require('querystring');
 var extend = require('util')._extend;
-var flatten = require('./flatten');
-// TODO: To be removed from app files
-// var dummy_text = require('./dummy_text').text;
+var flatten = require('./app/util/flatten');
 
 var app = express();
 
-app.use('/', express.static(path.join(__dirname, 'public')));
-app.set('views', __dirname + 'public');
+app.use('/', express.static(path.join(__dirname, '/app/public')));
+app.use('/', express.static(path.join(__dirname, '/app/views')));
+app.use('/', express.static(path.join(__dirname, '/app/util')));
 
+app.set('views', __dirname + '/app/views');
+
+console.log(__dirname)
 
 var appInfo = JSON.parse(process.env.VCAP_APPLICATION || "{}");
 
@@ -87,7 +89,7 @@ app.post('/map', function(req, res){
   var analyzeState = function () {
     console.log('analyzeState')
     T.get('search/tweets', { q: ''+req.body.subject+' since:2014-10-01', 
-                             count: 5000, lang: 'en' },
+                             count: 5000, geocode: req.body.geo, lang: 'en' },
                              function(err, data, response) {
       console.log(data.statuses.length)
       for(var i = 0; i < data.statuses.length; i++) {

@@ -50,7 +50,7 @@
     var g = svg.append("g")
         .style("stroke-width", "1.5px");
 
-    d3.json("lib/states.json", function(error, us) {
+    d3.json("/states.json", function(error, us) {
       g.selectAll("path")
           .data(topojson.feature(us, us.objects.states).features)
           .enter().append("path")
@@ -68,12 +68,12 @@
     function clicked(d) {
       if (active.node() === this) return reset();
       // ========= The link between front and server ===============
-      d3.json('lib/geo.json', function(err, data) {
-        bbox = (data[d.id]);
-        console.log(bbox);
+      d3.json('/geo.json', function(err, data) {
+        var geoLocation = (data[d.id].geo);
+        console.log(geoLocation);
         // sending data (geo location and the end user search criteria) to server
         // a post request with data to twitter
-        $http.post('/map', {geo: bbox, subject: $scope.search.val })
+        $http.post('/map', {geo: geoLocation, subject: $scope.search.val })
           .success(function(data){
             // on success, the `data` is the data from Watson
             // the data is the big 5 for a collection of tweets
